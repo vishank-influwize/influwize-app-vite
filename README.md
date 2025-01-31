@@ -1,1 +1,2 @@
-# bolt-generated-project
+# influwize-app
+Main Influwize web app
