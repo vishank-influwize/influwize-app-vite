@@ -1,17 +1,50 @@
-import React from 'react';
+import { useState } from 'react';
 import { SearchBar } from './SearchBar';
-import { CategoryTag } from './CategoryTag';
 import { SuggestedPrompt } from './SuggestedPrompt';
 import { PricingCard } from './PricingCard';
 import { FeaturesSection } from './features/FeaturesSection';
 import { HowItWorksSection } from './how-it-works/HowItWorksSection';
-import { Users, Briefcase, Camera, ShoppingBag, Megaphone } from 'lucide-react';
 
 type LandingPageProps = {
   onSignup: () => void;
+  onLogin: () => void;
+  onSearch?: (query: string) => void;
 };
 
-export function LandingPage({ onSignup }: LandingPageProps) {
+export function LandingPage({ onSignup, onLogin, onSearch }: LandingPageProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showAuthOptions, setShowAuthOptions] = useState(false);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    // Show auth options modal instead of directly showing signup
+    setShowAuthOptions(true);
+    // Store the query for later use after auth
+    if (onSearch) {
+      onSearch(query);
+    }
+  };
+
+  const handleSuggestedPromptClick = (prompt: string) => {
+    setSearchQuery(prompt);
+    // Show auth options modal instead of directly showing signup
+    setShowAuthOptions(true);
+    // Store the query for later use after auth
+    if (onSearch) {
+      onSearch(prompt);
+    }
+  };
+
+  const handleLoginClick = () => {
+    setShowAuthOptions(false);
+    onLogin();
+  };
+
+  const handleSignupClick = () => {
+    setShowAuthOptions(false);
+    onSignup();
+  };
+
   return (
     <div className="min-h-screen bg-gray-900">
       {/* Hero Section */}
@@ -25,28 +58,105 @@ export function LandingPage({ onSignup }: LandingPageProps) {
             100,000+ verified influencers at your fingertips
           </p>
           
-          <SearchBar onSearch={onSignup} />
-
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <CategoryTag label="Lifestyle" icon={<Users className="w-4 h-4" />} />
-            <CategoryTag label="Business" icon={<Briefcase className="w-4 h-4" />} />
-            <CategoryTag label="Photography" icon={<Camera className="w-4 h-4" />} />
-            <CategoryTag label="Fashion" icon={<ShoppingBag className="w-4 h-4" />} />
-            <CategoryTag label="Marketing" icon={<Megaphone className="w-4 h-4" />} />
-          </div>
+          <SearchBar 
+            onSearch={handleSearch} 
+            value={searchQuery} 
+            onChange={setSearchQuery} 
+            skipSaveSearch={true}
+          />
 
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <SuggestedPrompt 
-              text="Tech influencers with 100k+ followers" 
-              icon="💻"
+              text="Fashion influencers from Mumbai under 50k followers" 
+              icon="👗"
+              onClick={() => handleSuggestedPromptClick("Fashion influencers from Mumbai under 50k followers")}
             />
             <SuggestedPrompt 
-              text="Beauty vloggers for product launch" 
-              icon="💄"
+              text="Finance creators from India partnered with banking brands" 
+              icon="💰"
+              onClick={() => handleSuggestedPromptClick("Finance creators from India partnered with banking brands")}
+            />
+            <SuggestedPrompt 
+              text="US-based fitness trainers with YouTube channels" 
+              icon="💪"
+              onClick={() => handleSuggestedPromptClick("US-based fitness trainers with YouTube channels")}
+            />
+            <SuggestedPrompt 
+              text="Food bloggers from Japan with engagement rates above 5%" 
+              icon="🍣"
+              onClick={() => handleSuggestedPromptClick("Food bloggers from Japan with engagement rates above 5%")}
+            />
+            <SuggestedPrompt 
+              text="UK sustainable fashion advocates under age 30" 
+              icon="♻️"
+              onClick={() => handleSuggestedPromptClick("UK sustainable fashion advocates under age 30")}
+            />
+            <SuggestedPrompt 
+              text="Tech reviewers specializing in Apple products" 
+              icon="🍎"
+              onClick={() => handleSuggestedPromptClick("Tech reviewers specializing in Apple products")}
+            />
+            <SuggestedPrompt 
+              text="Australian travel creators focused on budget destinations" 
+              icon="✈️"
+              onClick={() => handleSuggestedPromptClick("Australian travel creators focused on budget destinations")}
+            />
+            <SuggestedPrompt 
+              text="Beauty influencers who promote cruelty-free products" 
+              icon="🐰"
+              onClick={() => handleSuggestedPromptClick("Beauty influencers who promote cruelty-free products")}
+            />
+            <SuggestedPrompt 
+              text="Brazilian gaming streamers with 100k+ Twitch followers" 
+              icon="🎮"
+              onClick={() => handleSuggestedPromptClick("Brazilian gaming streamers with 100k+ Twitch followers")}
+            />
+            <SuggestedPrompt 
+              text="Canadian home decor influencers who create DIY content" 
+              icon="🏠"
+              onClick={() => handleSuggestedPromptClick("Canadian home decor influencers who create DIY content")}
             />
           </div>
         </div>
       </section>
+
+      {/* Auth Options Modal */}
+      {showAuthOptions && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-8 rounded-xl w-full max-w-md relative">
+            <button
+              onClick={() => setShowAuthOptions(false)}
+              className="absolute right-4 top-4 text-gray-400 hover:text-white"
+            >
+              <span className="text-xl">&times;</span>
+            </button>
+            
+            <h2 className="text-2xl font-bold text-white mb-6">
+              Continue to Find Influencers
+            </h2>
+            
+            <p className="text-gray-300 mb-6">
+              To view detailed results for "{searchQuery}", please log in or create an account.
+            </p>
+            
+            <div className="space-y-3">
+              <button
+                onClick={handleLoginClick}
+                className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+              >
+                Log In
+              </button>
+              
+              <button
+                onClick={handleSignupClick}
+                className="w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900 rounded-lg font-medium transition-colors"
+              >
+                Create Account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Features Section */}
       <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800/30">

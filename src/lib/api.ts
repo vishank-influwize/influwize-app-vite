@@ -10,6 +10,12 @@ export type InfluencerProfile = {
   category: string;
   avg_likes: number;
   avg_comments: number;
+  followings?: number;
+  media_count?: number;
+  highlight_reel_count?: number;
+  relevance_score?: number;
+  creator_type?: string;
+  added_at?: string;
 };
 
 export async function searchInfluencers(query: string): Promise<InfluencerProfile[]> {

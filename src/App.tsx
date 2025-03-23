@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { AuthModal } from './components/AuthModal';
 import { DashboardLayout } from './components/dashboard/DashboardLayout';
@@ -12,6 +12,7 @@ function App() {
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [pendingSearchQuery, setPendingSearchQuery] = useState<string | null>(null);
 
   useEffect(() => {
     // Initial user load
@@ -35,6 +36,23 @@ function App() {
     setShowAuthModal(true);
   };
 
+  const handleLogin = () => {
+    setAuthMode('login');
+    setShowAuthModal(true);
+  };
+
+  const handleSearch = (query: string) => {
+    // If user is not logged in, store the query and open signup modal
+    if (!user) {
+      setPendingSearchQuery(query);
+      // Note: We no longer automatically open signup here since that's handled in LandingPage
+    }
+  };
+
+  const handleAuthModalClose = () => {
+    setShowAuthModal(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -47,14 +65,14 @@ function App() {
     <>
       <Toaster position="top-right" />
       {user ? (
-        <DashboardLayout />
+        <DashboardLayout initialSearchQuery={pendingSearchQuery} />
       ) : (
         <>
           <Header />
-          <LandingPage onSignup={handleSignup} />
+          <LandingPage onSignup={handleSignup} onLogin={handleLogin} onSearch={handleSearch} />
           <AuthModal 
             isOpen={showAuthModal}
-            onClose={() => setShowAuthModal(false)}
+            onClose={handleAuthModalClose}
             mode={authMode}
           />
         </>
